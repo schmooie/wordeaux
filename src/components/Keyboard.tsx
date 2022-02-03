@@ -1,6 +1,7 @@
 import react, { Component } from 'React';
 import styled from 'styled-components';
 import Box from './Box';
+import COLORS from '../constants/colors'
 
 interface KeyPressState {
   pressed: boolean,
@@ -38,7 +39,7 @@ export interface KeyboardState {
 }
 
 const Button = styled.button`
-  background: ${(props: KeyPressState) => props.presentInWord ? 'green' : props.pressed ? 'gray' : 'white'};
+  background: ${(props: KeyPressState) => props.presentInWord ? COLORS.Green : props.pressed ? COLORS.Gray : COLORS.White};
   color: black;
   padding: 15px;
   margin: 2px;

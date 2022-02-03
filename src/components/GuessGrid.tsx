@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Box from './Box'
+import COLORS from '../constants/colors';
 
 enum Matches {
   Perfect = "PERFECT",
@@ -10,10 +11,10 @@ enum Matches {
 }
 
 const matchColorDictionary = {
-  [Matches.Perfect]: 'green',
-  [Matches.Partial]: 'yellow',
-  [Matches.No]: 'gray',
-  [Matches.Empty]: 'white',
+  [Matches.Perfect]: COLORS.Green,
+  [Matches.Partial]: COLORS.Yellow,
+  [Matches.No]: COLORS.Gray,
+  [Matches.Empty]: COLORS.White,
 }
 
 const LetterBox = styled.div<{
@@ -66,14 +67,14 @@ function checkGuess(guess: string, correctWord: string, hideResults: boolean) {
 
 export default function GuessGrid(props: {
   wordsGuessed: string[],
-  guessesRemaining: number,
+  guessesAllowed: number,
   correctWord: string,
   isCurrentGuessSubmitted: boolean,
   indexOfCurrentGuess: number,
 }) {
   const {
     wordsGuessed,
-    guessesRemaining,
+    guessesAllowed,
     correctWord,
     isCurrentGuessSubmitted,
     indexOfCurrentGuess
@@ -94,7 +95,7 @@ export default function GuessGrid(props: {
     dummyWordArr.push(null);
   }
 
-  for (let i = 0; i < guessesRemaining - wordsGuessed.length; i++) {
+  for (let i = 0; i < guessesAllowed - wordsGuessed.length; i++) {
     renderableGuesses.push([...dummyWordArr]);
   }
 

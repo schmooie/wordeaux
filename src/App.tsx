@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-
+import styled from 'styled-components';
 import Keyboard, { KeyboardState } from './components/Keyboard';
 import GuessGrid from './components/GuessGrid';
 import Box from './components/Box';
@@ -55,12 +54,18 @@ interface AppProps {
 
 interface AppState {
   keysPressedDictionary: KeyboardState
-  guessesRemaining: number,
+  guessesAllowed: number,
   correctWord: string,
   lettersInWord: string[],
   wordsGuessed: string[],
   currentGuess: string[],
+  gameWon: boolean,
 }
+
+const StyledKeyboard = styled(Keyboard)`
+  margin-top: 20px;
+  background: red;
+`;
 
 class App extends Component<AppProps, AppState>{
   constructor(props: AppProps) {
@@ -70,18 +75,22 @@ class App extends Component<AppProps, AppState>{
 
     this.state = {
       keysPressedDictionary: createKeyboardState(),
-      guessesRemaining: props.guessesAllowed,
+      guessesAllowed: props.guessesAllowed,
       correctWord, // todo move to props
       lettersInWord: correctWord.split(''),
       wordsGuessed: [],
       currentGuess: [],
+      gameWon: false,
     };
   }
 
   onLetterClick(letter: string) {
-    const { currentGuess, lettersInWord } = this.state;
+    const { currentGuess, lettersInWord, wordsGuessed, guessesAllowed, gameWon } = this.state;
 
-    if (currentGuess.length === lettersInWord.length) {
+    if (gameWon ||
+      (currentGuess.length === lettersInWord.length) ||
+      (wordsGuessed.length >= guessesAllowed)
+    ) {
       return;
     }
 
@@ -91,7 +100,7 @@ class App extends Component<AppProps, AppState>{
   }
 
   onSubmit() {
-    const { currentGuess, keysPressedDictionary, lettersInWord, wordsGuessed } = this.state;
+    const { currentGuess, keysPressedDictionary, lettersInWord, wordsGuessed, correctWord } = this.state;
 
     // ignore submits of insufficient length
     if (currentGuess.length !== lettersInWord.length) {
@@ -108,13 +117,16 @@ class App extends Component<AppProps, AppState>{
       }
     }, {});
 
+    const guessWord = currentGuess.join('');
+
     this.setState({
       keysPressedDictionary: createKeyboardState({
         ...keysPressedDictionary,
         ...newGuessKeyboardState,
       }),
+      gameWon: guessWord === correctWord,
       // append word to list of guessed words
-      wordsGuessed: [...wordsGuessed, currentGuess.join('')],
+        wordsGuessed: [...wordsGuessed, guessWord],
       // clear current guess list
       currentGuess: [],
     });
@@ -130,7 +142,7 @@ class App extends Component<AppProps, AppState>{
   render() {
     const {
       keysPressedDictionary,
-      guessesRemaining,
+      guessesAllowed,
       correctWord,
       wordsGuessed,
       currentGuess
@@ -140,17 +152,15 @@ class App extends Component<AppProps, AppState>{
 
     return (
       <div className="App">
-        <div>Guesses remaining: {guessesRemaining}</div>
-        <div>Word: {correctWord}</div>
         <Box alignItems="center" flexDirection="column">
           <GuessGrid
             wordsGuessed={wordsGuessedIncludingCurrentGuess}
-            guessesRemaining={guessesRemaining}
+            guessesAllowed={guessesAllowed}
             correctWord={correctWord}
             isCurrentGuessSubmitted={!currentGuess.length}
             indexOfCurrentGuess={wordsGuessed.length}
           />
-          <Keyboard
+          <StyledKeyboard
             keysPressedDictionary={keysPressedDictionary}
             onLetterClick={this.onLetterClick.bind(this)}
             onSubmit={this.onSubmit.bind(this)}
