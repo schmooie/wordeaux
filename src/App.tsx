@@ -147,6 +147,8 @@ class App extends Component<AppProps, AppState>{
             wordsGuessed={wordsGuessedIncludingCurrentGuess}
             guessesRemaining={guessesRemaining}
             correctWord={correctWord}
+            isCurrentGuessSubmitted={!currentGuess.length}
+            indexOfCurrentGuess={wordsGuessed.length}
           />
           <Keyboard
             keysPressedDictionary={keysPressedDictionary}
